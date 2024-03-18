@@ -16,11 +16,11 @@ Ray Scene::generate_ray_to_pixel(size_t x, size_t y) const {
 
 glm::vec3 Scene::get_pixel_color(size_t x, size_t y) const {
 	std::optional<std::pair<float, glm::vec3>> ans;
-	
+
 	for (const auto &pr : primitives) {
 		Ray ray = generate_ray_to_pixel(x, y);
 		std::optional<std::pair<float, glm::vec3>> intersection;
-		
+
 		switch (pr.index()) {
 		case 0:
 			intersection = std::get<0>(pr).intersect(ray);
@@ -37,7 +37,7 @@ glm::vec3 Scene::get_pixel_color(size_t x, size_t y) const {
 		default:
 			assert(false);
 		}
-		
+
 		if (!intersection.has_value()) {
 			continue;
 		}
@@ -56,10 +56,10 @@ glm::vec3 Scene::get_pixel_color(size_t x, size_t y) const {
 
 Scene read_scene(std::istream &in) {
 	std::unordered_map <std::string, int> command_id;
-	
+
 	static const int UNKNOWN_COMMAND = 0;
 	static const int FIN             = -1;
-	
+
 	static const int DIMENSIONS      = 1;
 	static const int BG_COLOR        = 2;
 	static const int CAMERA_POSITION = 3;
@@ -75,7 +75,7 @@ Scene read_scene(std::istream &in) {
 	static const int PLANE           = 12;
 	static const int ELLIPSOID       = 13;
 	static const int BOX             = 14;
-	
+
 	command_id["FIN"]             = FIN;
 
 	command_id["DIMENSIONS"]      = DIMENSIONS;
@@ -121,7 +121,7 @@ Scene read_scene(std::istream &in) {
 			scene.primitives.push_back(*ptr);
 			break;
 		}
-		
+
 		case none:
 			assert(false);
 		}
@@ -157,25 +157,25 @@ Scene read_scene(std::istream &in) {
 			in >> v.x >> v.y >> v.z;
 			break;
 		}
-		
+
 		case CAMERA_RIGHT: {
 			glm::vec3& v = scene.camera_right;
 			in >> v.x >> v.y >> v.z;
 			break;
 		}
-		
+
 		case CAMERA_UP: {
 			glm::vec3& v = scene.camera_up;
 			in >> v.x >> v.y >> v.z;
 			break;
 		}
-		
+
 		case CAMERA_FORWARD: {
 			glm::vec3& v = scene.camera_forward;
 			in >> v.x >> v.y >> v.z;
 			break;
 		}
-		
+
 		case CAMERA_FOV_X:
 			float camera_fov_x;
 			in >> camera_fov_x;
@@ -193,7 +193,7 @@ Scene read_scene(std::istream &in) {
 			cur_position = glm::vec3(0.f, 0.f, 0.f);
 			cur_rotation = glm::quat(1.f, 0.f, 0.f, 0.f);
 			cur_color = glm::vec3(0.f, 0.f, 0.f);
-			
+
 			break;
 
 		case POSITION:
@@ -201,7 +201,7 @@ Scene read_scene(std::istream &in) {
 			if (cur_primitive) {
 				cur_primitive->position = cur_position;
 			}
-			
+
 			break;
 
 		case ROTATION:
@@ -209,7 +209,7 @@ Scene read_scene(std::istream &in) {
 			if (cur_primitive) {
 				cur_primitive->rotation = cur_rotation;
 			}
-			
+
 			break;
 
 		case COLOR:
@@ -217,27 +217,27 @@ Scene read_scene(std::istream &in) {
 			if (cur_primitive) {
 				cur_primitive->color = cur_color;
 			}
-			
+
 			break;
 
 		case PLANE: {
 			glm::vec3 normal;
 			in >> normal.x >> normal.y >> normal.z;
-			
+
 			cur_primitive_type = plane;
 			cur_primitive = std::make_unique<Plane>(normal);
 
 			cur_primitive->position = cur_position;
 			cur_primitive->rotation = cur_rotation;
 			cur_primitive->color = cur_color;
-			
+
 			break;
 		}
 
 		case ELLIPSOID: {
 			glm::vec3 axes;
 			in >> axes.x >> axes.y >> axes.z;
-			
+
 			cur_primitive_type = ellipsoid;
 			cur_primitive = std::make_unique<Ellipsoid>(axes);
 
@@ -251,14 +251,14 @@ Scene read_scene(std::istream &in) {
 		case BOX: {
 			glm::vec3 semi_axes;
 			in >> semi_axes.x >> semi_axes.y >> semi_axes.z;
-			
+
 			cur_primitive_type = box;
 			cur_primitive = std::make_unique<Box>(semi_axes);
 
 			cur_primitive->position = cur_position;
 			cur_primitive->rotation = cur_rotation;
 			cur_primitive->color = cur_color;
-			
+
 			break;
 		}
 

@@ -15,7 +15,7 @@ using std::size_t;
 struct Scene {
 	size_t width, height;
 	glm::vec3 bg_color;
-	
+
 	glm::vec3 camera_position, camera_right, camera_up, camera_forward;
 	glm::vec2 tan_fov;
 

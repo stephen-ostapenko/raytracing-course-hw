@@ -24,7 +24,7 @@ Image::~Image() {
 
 Image render_scene(const Scene &scene) {
 	Image result(scene.width, scene.height);
-	
+
 	for (size_t i = 0; i < scene.height; i++) {
 		for (size_t j = 0; j < scene.width; j++) {
 			result.data[i][j] = scene.get_pixel_color(j, i);
